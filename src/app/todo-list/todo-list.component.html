@@ -1,0 +1,33 @@
+<table>
+  <thead>
+    <th class="task">Task</th>
+    <th class="status">Status</th>
+    <th class="edit">Edit</th>
+    <th class="remove">Remove</th>
+  </thead>
+  <tbody *ngFor="let todo of todos">
+    <td class="task">{{ todo.Content }}</td>
+    <td class="status">
+      <div *ngIf="todo.IsCompleted; else emptyCheckbox">
+        <button (click)="handleFilledCheckboxClick(todo.Id, todo)">
+          <img class="checkbox" src="../../assets/check_fill.png" />
+        </button>
+      </div>
+      <ng-template #emptyCheckbox>
+        <button (click)="handleEmptyCheckboxClick(todo.Id, todo)">
+          <img class="checkbox" src="../../assets/check_empty.png" />
+        </button>
+      </ng-template>
+    </td>
+    <td class="edit">
+      <button (click)="handleEdit(todo.Id, todo)">
+        <img src="../../assets/edit.png" alt="edit" />
+      </button>
+    </td>
+    <td class="remove">
+      <button (click)="handleRemove(todo.Id)">
+        <img src="../../assets/delete.png" alt="delete" />
+      </button>
+    </td>
+  </tbody>
+</table>

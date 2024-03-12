@@ -1,0 +1,9 @@
+:root {
+  --primary-color: rgb(79, 99, 151);
+  --secondary-color: rgb(125, 144, 192);
+  --lightgray-color: rgb(185, 192, 209);
+  --font-color-white: #f2f2f2;
+  --font-color-black: rgb(58, 64, 78);
+  --font-color-gray: rgb(125, 130, 141);
+  --font-family: Arial, sans-serif;
+}

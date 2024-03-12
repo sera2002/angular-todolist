@@ -1,0 +1,12 @@
+<form (ngSubmit)="onSubmit()">
+  <div class="container">
+    <input
+      type="text"
+      name="Content"
+      [(ngModel)]="todo.Content"
+      placeholder="할 일을 입력해주세요."
+      required
+    />
+    <button type="submit">Add</button>
+  </div>
+</form>
