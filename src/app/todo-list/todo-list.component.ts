@@ -1,19 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TodoService } from '../todo.service';
-import { TodoItem } from '../todo-item';
-
-// const todos = [
-//   { id: 1, content: 'hi', isCompleted: false },
-//   { id: 2, content: 'hello', isCompleted: false },
-//   { id: 3, content: 'hahaha', isCompleted: false },
-//   { id: 4, content: "i don't know what to do now", isCompleted: false },
-//   {
-//     id: 5,
-//     content:
-//       "This is very long content. i don't know what to do now, This is very long content. hahaha",
-//     isCompleted: false,
-//   },
-// ];
+import { TodoItem, TodoItemEdit } from '../todo-item';
 
 @Component({
   selector: 'app-todo-list',
@@ -21,7 +8,7 @@ import { TodoItem } from '../todo-item';
   styleUrls: ['./todo-list.component.css'],
 })
 export class TodoListComponent implements OnInit {
-  todos: TodoItem[] = [];
+  todos: TodoItemEdit[] = [];
 
   constructor(private todoService: TodoService) {}
 
@@ -33,44 +20,63 @@ export class TodoListComponent implements OnInit {
   }
 
   loadTodos(): void {
-    this.todoService
-      .getTodoItems()
-      .subscribe((todos: TodoItem[]) => (this.todos = todos));
+    this.todoService.getTodoItems().subscribe((todos: TodoItem[]) => {
+      this.todos = todos.map((todo) => ({ ...todo, isEditing: false }));
+    });
   }
 
   handleFilledCheckboxClick(id: number, body: TodoItem) {
-    this.todoService.changeTodoItem(id, body).subscribe(
-      (response) => {
-        // 체크박스 변경
-        const index = this.todos.findIndex((todo) => todo.id === id);
-        if (index !== -1) {
-          this.todos[index].isCompleted = !this.todos[index].isCompleted;
+    this.todoService
+      .changeTodoItem(id, { ...body, isCompleted: false })
+      .subscribe(
+        (response) => {
+          // 체크박스 변경
+          const index = this.todos.findIndex((todo) => todo.id === id);
+          if (index !== -1) {
+            this.todos[index].isCompleted = !this.todos[index].isCompleted;
+          }
+          console.log('Todo 상태 변경 완료: ', response);
+        },
+        (error) => {
+          console.error('Todo 상태 변경 에러: ', error);
         }
-        console.log('Todo 상태 변경 완료: ', response);
-      },
-      (error) => {
-        console.error('Todo 상태 변경 에러: ', error);
-      }
-    );
+      );
   }
 
   handleEmptyCheckboxClick(id: number, body: TodoItem) {
-    this.todoService.changeTodoItem(id, body).subscribe(
-      (response) => {
-        // 체크박스 변경
-        const index = this.todos.findIndex((todo) => todo.id === id);
-        if (index !== -1) {
-          this.todos[index].isCompleted = !this.todos[index].isCompleted;
+    this.todoService
+      .changeTodoItem(id, { ...body, isCompleted: true })
+      .subscribe(
+        (response) => {
+          // 체크박스 변경
+          const index = this.todos.findIndex((todo) => todo.id === id);
+          if (index !== -1) {
+            this.todos[index].isCompleted = !this.todos[index].isCompleted;
+          }
+          console.log('Todo 상태 변경 완료: ', response);
+        },
+        (error) => {
+          console.error('Todo 상태 변경 에러: ', error);
         }
-        console.log('Todo 상태 변경 완료: ', response);
-      },
-      (error) => {
-        console.error('Todo 상태 변경 에러: ', error);
-      }
-    );
+      );
   }
 
-  handleEdit(id: number, body: TodoItem) {
+  handleEdit(id: number) {
+    const index = this.todos.findIndex((todo) => todo.id === id);
+    if (index !== -1) {
+      // Switch to edit mode
+      this.todos[index].isEditing = !this.todos[index].isEditing;
+    }
+  }
+
+  submitEdit(id: number, body: TodoItem) {
+    // 다시 read 모드로
+    const index = this.todos.findIndex((todo) => todo.id === id);
+    if (index !== -1) {
+      // Switch to edit mode
+      this.todos[index].isEditing = false;
+    }
+
     this.todoService.changeTodoItem(id, body).subscribe(
       (response) => {
         console.log('Todo 내용 변경 완료: ', response);

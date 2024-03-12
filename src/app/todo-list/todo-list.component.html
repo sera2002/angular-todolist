@@ -6,7 +6,18 @@
     <th class="remove">Remove</th>
   </thead>
   <tbody *ngFor="let todo of todos">
-    <td class="task">{{ todo.content }}</td>
+    <ng-container *ngIf="!todo.isEditing; else editMode">
+      <td class="task">{{ todo.content }}</td>
+    </ng-container>
+    <ng-template #editMode>
+      <td class="task">
+        <input
+          type="text"
+          [(ngModel)]="todo.content"
+          (keyup.enter)="submitEdit(todo.id, todo)"
+        />
+      </td>
+    </ng-template>
     <td class="status">
       <div *ngIf="todo.isCompleted; else emptyCheckbox">
         <button (click)="handleFilledCheckboxClick(todo.id, todo)">
@@ -20,7 +31,7 @@
       </ng-template>
     </td>
     <td class="edit">
-      <button (click)="handleEdit(todo.id, todo)">
+      <button (click)="handleEdit(todo.id)">
         <img src="../../assets/edit.png" alt="edit" />
       </button>
     </td>

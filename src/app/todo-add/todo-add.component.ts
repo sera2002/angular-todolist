@@ -20,7 +20,6 @@ export class TodoAddComponent {
     this.todoService.createTodoItem(this.todo).subscribe(
       (response) => {
         console.log('Todo 생성 완료:', response);
-        this.todo.content = '';
       },
       (error) => {
         console.error('Todo 생성 실패:', error);

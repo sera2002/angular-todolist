@@ -3,3 +3,7 @@ export interface TodoItem {
   content: string;
   isCompleted: boolean;
 }
+
+export interface TodoItemEdit extends TodoItem {
+  isEditing: boolean;
+}
