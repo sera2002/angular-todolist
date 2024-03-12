@@ -9,9 +9,9 @@ import { TodoItem } from '../todo-item';
 })
 export class TodoAddComponent {
   todo: TodoItem = {
-    Id: 0,
-    Content: '',
-    IsCompleted: false,
+    id: 0,
+    content: '',
+    isCompleted: false,
   };
 
   constructor(private todoService: TodoService) {}
@@ -20,6 +20,7 @@ export class TodoAddComponent {
     this.todoService.createTodoItem(this.todo).subscribe(
       (response) => {
         console.log('Todo 생성 완료:', response);
+        this.todo.content = '';
       },
       (error) => {
         console.error('Todo 생성 실패:', error);

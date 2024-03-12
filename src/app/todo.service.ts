@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { TodoItem } from './todo-item';
 
 @Injectable({
@@ -8,6 +8,10 @@ import { TodoItem } from './todo-item';
 })
 export class TodoService {
   private apiUrl = 'http://13.238.99.1:5000/api/todo';
+  private todos: BehaviorSubject<TodoItem[]> = new BehaviorSubject<TodoItem[]>(
+    []
+  );
+  public todos$: Observable<TodoItem[]> = this.todos.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -15,19 +19,31 @@ export class TodoService {
     return this.http.get<TodoItem[]>(`${this.apiUrl}`);
   }
 
-  getTodoItem(Id: number): Observable<TodoItem> {
-    return this.http.get<TodoItem>(`${this.apiUrl}/${Id}`);
+  getTodoItem(id: number): Observable<TodoItem> {
+    return this.http.get<TodoItem>(`${this.apiUrl}/${id}`);
   }
 
   createTodoItem(todoItem: TodoItem): Observable<TodoItem> {
-    return this.http.post<TodoItem>(`${this.apiUrl}`, todoItem);
+    const currentTodos = this.todos.getValue();
+    const updatedTodos = [...currentTodos, todoItem];
+    this.todos.next(updatedTodos);
+
+    return this.http.post<TodoItem>(`${this.apiUrl}`, {
+      Id: todoItem.id,
+      Content: todoItem.content,
+      IsCompleted: todoItem.isCompleted,
+    });
   }
 
-  changeTodoItem(Id: number, todoItem: TodoItem): Observable<TodoItem> {
-    return this.http.put<TodoItem>(`${this.apiUrl}/${Id}`, todoItem);
+  changeTodoItem(id: number, todoItem: TodoItem): Observable<TodoItem> {
+    return this.http.put<TodoItem>(`${this.apiUrl}/${id}`, {
+      Id: todoItem.id,
+      Content: todoItem.content,
+      IsCompleted: todoItem.isCompleted,
+    });
   }
 
-  deleteTodoItem(Id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${Id}`);
+  deleteTodoItem(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
